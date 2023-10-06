@@ -32,12 +32,16 @@ else
 fi
 
 cd recipes
+touch featured.json
+
 git config --global --add safe.directory /app/recipes
 EXPECTED_PNPM_VERSION=$(node -p 'require("./package.json").engines.pnpm')
 npm i -gf pnpm@$EXPECTED_PNPM_VERSION
 pnpm i
 pnpm package
 cd ..
+
+mkdir -p /app/tmp
 
 key_file="${DATA_DIR}/FERDIUM_APP_KEY.txt"
 

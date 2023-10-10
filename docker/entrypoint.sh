@@ -21,7 +21,9 @@ if [ ! -d "/app/recipes/.git" ]; # When we mount an existing volume (ferdium-rec
 then
   echo '**** Generating recipes for first run ****'
   git clone --branch main https://github.com/ferdium/ferdium-recipes recipes
+  git config --global --add safe.directory /app/recipes
 else
+  git config --global --add safe.directory /app/recipes
   echo '**** Updating recipes ****'
   chown -R "${PUID:-1000}":"${PGID:-1000}" /app/recipes # Fixes ownership problem when doing git pull -r
   cd recipes
@@ -57,6 +59,10 @@ then
   adonis key:generate
   APP_KEY=$(grep APP_KEY .env | cut -d '=' -f2)
   echo ${APP_KEY} > ${key_file}
+  print_app_key_message ${APP_KEY}
+elif [ ! -z "${APP_KEY}" ] && [ ! -f "${key_file}" ];
+then
+  echo "${APP_KEY}" > ${key_file}
   print_app_key_message ${APP_KEY}
 else
   APP_KEY=$(cat ${key_file})

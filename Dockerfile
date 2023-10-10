@@ -12,8 +12,9 @@ COPY . /server-build
 ENV CI=true
 ENV NODE_ENV=development
 RUN PNPM_VERSION=$(node -p 'require("./package.json").engines.pnpm'); npm i -g pnpm@$PNPM_VERSION
-#-RUN pnpm install --config.build-from-source=sqlite --config.sqlite=/usr/local
-RUN pnpm install image-size simple-git sqlite3@^5.0.0
+RUN pnpm install --config.build-from-source=sqlite --config.sqlite=/usr/local
+#-RUN pnpm install sqlite3@^5.0.0;
+RUN pnpm install image-size simple-git
 RUN pnpm install development
 
 # ---- RUNTIME IMAGE ----------------------------------------------------------

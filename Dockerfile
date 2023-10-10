@@ -1,4 +1,4 @@
-ARG NODE_VERSION=18.15.0
+ARG NODE_VERSION=18.18.0
 
 # ---- RUNTIME BUILD -----------------------------------------------------------
 FROM node:${NODE_VERSION}-alpine as build
@@ -12,7 +12,8 @@ COPY . /server-build
 ENV CI=true
 ENV NODE_ENV=development
 RUN PNPM_VERSION=$(node -p 'require("./package.json").engines.pnpm'); npm i -g pnpm@$PNPM_VERSION
-RUN pnpm install --config.build-from-source=sqlite --config.sqlite=/usr/local
+#-RUN pnpm install --config.build-from-source=sqlite --config.sqlite=/usr/local
+RUN pnpm install image-size simple-git sqlite3@^5.0.0
 RUN pnpm install development
 
 # ---- RUNTIME IMAGE ----------------------------------------------------------
@@ -35,9 +36,6 @@ RUN apk add --no-cache sqlite-libs curl su-exec python3 make g++ py3-pip git py3
 
 RUN \
   PNPM_VERSION=$(node -p 'require("./package.json").engines.pnpm'); npm i -g pnpm@$PNPM_VERSION; \
-  pnpm i image-size; \
-  pnpm i simple-git; \
-  pnpm i sqlite3@^5.0.0; \
   npm i -g @adonisjs/cli
 
 HEALTHCHECK --start-period=5s --interval=30s --retries=5 --timeout=3s CMD curl -sSf http://localhost:${PORT}/health

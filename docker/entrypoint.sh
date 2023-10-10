@@ -23,7 +23,7 @@ then
   git clone --branch main https://github.com/ferdium/ferdium-recipes recipes
 else
   echo '**** Updating recipes ****'
-  chown -R root /app/recipes # Fixes ownership problem when doing git pull -r
+  chown -R "${PUID:-1000}":"${PGID:-1000}" /app/recipes # Fixes ownership problem when doing git pull -r
   cd recipes
   git stash -u
   git pull -r
@@ -32,7 +32,6 @@ else
 fi
 
 cd recipes
-touch featured.json
 
 git config --global --add safe.directory /app/recipes
 EXPECTED_PNPM_VERSION=$(node -p 'require("./package.json").engines.pnpm')
@@ -52,7 +51,7 @@ print_app_key_message() {
 }
 
 # Create APP key if needed
-if [ -z ${APP_KEY} ] && [ ! -f ${key_file} ]
+if [ -z "${APP_KEY}" ] && [ ! -f "${key_file}" ]
 then
   echo '**** Generating Ferdium-server app key for first run ****'
   adonis key:generate
